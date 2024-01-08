@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Prediction</title>
+</head>
+<body>
+    <h1>Machine Learning Prediction</h1>
+
+    <form id="predictionForm">
+        <label for="Year">Year:</label>
+        <input type="number" id="Year" name="Year" required>
+
+        <label for="Month">Month:</label>
+        <input type="number" id="Month" name="Month" required>
+
+        <label for="Day">Day:</label>
+        <input type="number" id="Day" name="Day" required>
+
+        <label for="Hour">Hour:</label>
+        <input type="number" id="Hour" name="Hour" required>
+
+        <label for="Minute">Minute:</label>
+        <input type="number" id="Minute" name="Minute" required>
+
+        <label for="duration_s">Duration (s):</label>
+        <input type="number" id="duration_s" name="duration_s" required>
+
+        <label for="total_counts">Total Counts:</label>
+        <input type="number" id="total_counts" name="total_counts" required>
+
+        <label for="x_pos_asec">X Position (asec):</label>
+        <input type="number" id="x_pos_asec" name="x_pos_asec" required>
+
+        <label for="y_pos_asec">Y Position (asec):</label>
+        <input type="number" id="y_pos_asec" name="y_pos_asec" required>
+
+        <label for="radial">Radial:</label>
+        <input type="number" id="radial" name="radial" required>
+
+        <label for="active_region_ar">Active Region:</label>
+        <input type="number" id="active_region_ar" name="active_region_ar" required>
+
+        <button type="button" onclick="makePrediction()">Predict</button>
+    </form>
+
+    <div id="predictionResult"></div>
+
+    <script>
+        async function makePrediction() {
+            // Récupérer les valeurs des champs d'entrée
+            const Year = document.getElementById('Year').value;
+            const Month = document.getElementById('Month').value;
+            const Day = document.getElementById('Day').value;
+            const Hour = document.getElementById('Hour').value;
+            const Minute = document.getElementById('Minute').value;
+            const duration_s = document.getElementById('duration_s').value;
+            const total_counts = document.getElementById('total_counts').value;
+            const x_pos_asec = document.getElementById('x_pos_asec').value;
+            const y_pos_asec = document.getElementById('y_pos_asec').value;
+            const radial = document.getElementById('radial').value;
+            const active_region_ar = document.getElementById('active_region_ar').value;
+
+            try {
+                // Effectuer une requête AJAX pour envoyer les données au serveur
+                const response = await fetch('http://localhost:3000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Year,
+                        Month,
+                        Day,
+                        Hour,
+                        Minute,
+                        duration_s,
+                        total_counts,
+                        x_pos_asec,
+                        y_pos_asec,
+                        radial,
+                        active_region_ar
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Afficher le résultat de la prédiction dans une div
+                document.getElementById('predictionResult').innerHTML = `Prediction: ${data.prediction}`;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
